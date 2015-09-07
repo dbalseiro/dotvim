@@ -1,6 +1,7 @@
 autocmd!
 
 au bufreadpost,filereadpost *.drl set ft=drools
+au bufreadpost,filereadpost asana_comment.txt set ft=asana
 
 "VUNDLE
 set nocompatible
@@ -28,6 +29,9 @@ Plugin 'L9'
 "
 " " All of your Plugins must be added before the following line
 Bundle 'altercation/vim-colors-solarized'
+
+Bundle 'ivalkeen/vim-simpledb'
+
 call vundle#end()            " required
 filetype plugin indent on    " required
 
@@ -169,4 +173,11 @@ map <leader>t :w\|:!./%<cr>
 set foldmethod=manual
 set nofoldenable
 set number
+
+"""""""""""""""""
+" ASANA PROJECT "
+"""""""""""""""""
+map <leader>j :wa\|:make --directory=$ASANA_PATH clean asana<cr>
+map <leader>g :!go test<cr>
+
 
