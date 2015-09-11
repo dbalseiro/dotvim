@@ -30,7 +30,7 @@ Plugin 'L9'
 "
 " " All of your Plugins must be added before the following line
 Bundle 'altercation/vim-colors-solarized'
-
+Bundle 'nvie/vim-togglemouse'
 Bundle 'ivalkeen/vim-simpledb'
 
 call vundle#end()            " required
@@ -46,6 +46,12 @@ set guifont=Menlo\ for\ Powerline
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " BASIC EDITING CONFIGURATION
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set nobackup
+set noswapfile
+set pastetoggle=<F2>
+set nowrap "dont like wrapping
+set mouse=a
+
 " allow unsaved background buffers and remember marks/undo for them
 set hidden
 " remember more commands and search history
