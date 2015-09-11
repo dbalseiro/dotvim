@@ -205,4 +205,14 @@ autocmd InsertLeave * call ToggleRelativeOn()
 map <leader>j :wa\|:make --directory=$ASANA_PATH clean asana<cr>
 map <leader>g :!go test<cr>
 
+""""""""""""""""""""""
+" EASY EDITING VIMRC "
+""""""""""""""""""""""
+nmap <silent> <leader>ve :e $MYVIMRC<CR>
+nmap <silent> <leader>vs :so $MYVIMRC<CR>
 
+""""""""""""""
+" FORMAT (?) "
+""""""""""""""
+vmap Q gq
+nmap Q gqap
