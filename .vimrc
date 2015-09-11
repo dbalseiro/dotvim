@@ -5,6 +5,7 @@ au bufreadpost,filereadpost asana_comment.txt set ft=asana
 
 "VUNDLE
 set nocompatible
+set noshowmode
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
