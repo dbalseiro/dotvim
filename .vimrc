@@ -9,29 +9,19 @@ set noshowmode
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-" let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 Plugin 'Lokaltog/vim-powerline'
-" " The following are examples of different formats supported.
-" " Keep Plugin commands between vundle#begin/end.
-" " plugin on GitHub repo
 Plugin 'tpope/vim-fugitive'
-" " plugin from http://vim-scripts.org/vim/scripts.html
 Plugin 'L9'
-" " Git plugin not hosted on GitHub
-" Plugin 'git://git.wincent.com/command-t.git'
-" " git repos on your local machine (i.e. when working on your own plugin)
-" Plugin 'file:///home/gmarik/path/to/plugin'
-" " The sparkup vim script is in a subdirectory of this repo called vim.
-" " Pass the path to set the runtimepath properly.
-" Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-" " Avoid a name conflict with L9
-" Plugin 'user/L9', {'name': 'newL9'}
-"
+Plugin 'wincent/Command-T'
+Plugin 'nvie/vim-togglemouse'
+Plugin 'ivalkeen/vim-simpledb'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'scrooloose/syntastic'
+"Plugin 'mileszs/ack.vim'
+Plugin 'rking/ag.vim'
 " " All of your Plugins must be added before the following line
 Bundle 'altercation/vim-colors-solarized'
-Bundle 'nvie/vim-togglemouse'
-Bundle 'ivalkeen/vim-simpledb'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -39,7 +29,7 @@ filetype plugin indent on    " required
 let g:Powerline_symbols = 'fancy'
 set encoding=utf-8
 set fillchars+=stl:\ ,stlnc:\
-set term=xterm-256color
+"set term=xterm-256color
 set termencoding=utf-8
 set guifont=Menlo\ for\ Powerline
 
@@ -140,8 +130,12 @@ noremap <leader>m :tabnext<cr>
 """"""""""""""""""""""
 cnoremap %% <C-R>=expand('%:h').'/'<cr>
 map <leader>s :split\|:edit %%<cr>
-map <C-J> <C-W>j<C-W>
-map <C-K> <C-W>k<C-W>
+map <leader>S :vsplit\|:edit %%<cr>
+map <C-J> <C-W>j
+map <C-K> <C-W>k
+map <C-H> <C-W>h
+map <C-L> <C-W>l
+map <C-S> <C-W><S-T>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " MULTIPURPOSE TAB KEY
@@ -156,8 +150,7 @@ function! InsertTabWrapper()
     endif
 endfunction
 inoremap <tab> <c-r>=InsertTabWrapper()<cr>
-inoremap <s-tab> <c-n>
-
+inoremap <s-tab> <c-x><c-u>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " RENAME CURRENT FILE
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -175,7 +168,7 @@ map <leader>r :call RenameFile()<cr>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " RUNNING TESTS
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <leader>t :w\|:!./%<cr>
+map <leader>o :w\|:!./%<cr>
 
 set foldmethod=manual
 set nofoldenable
@@ -185,11 +178,11 @@ set nofoldenable
 """"""""""""""""
 set relativenumber
 set number
-function ToggleNumbersOn()
+function! ToggleNumbersOn()
     set relativenumber!
     set number
 endfunction
-function ToggleRelativeOn()
+function! ToggleRelativeOn()
     set number!
     set relativenumber
     set number
@@ -203,16 +196,125 @@ autocmd InsertLeave * call ToggleRelativeOn()
 " ASANA PROJECT "
 """""""""""""""""
 map <leader>j :wa\|:make --directory=$ASANA_PATH clean asana<cr>
-map <leader>g :!go test<cr>
 
 """"""""""""""""""""""
 " EASY EDITING VIMRC "
 """"""""""""""""""""""
-nmap <silent> <leader>ve :e $MYVIMRC<CR>
-nmap <silent> <leader>vs :so $MYVIMRC<CR>
+nnoremap <silent> <leader>ve :e $MYVIMRC<CR>
+nnoremap <silent> <leader>vs :so $MYVIMRC<CR>
 
-""""""""""""""
-" FORMAT (?) "
-""""""""""""""
-vmap Q gq
-nmap Q gqap
+
+""""""""
+" ECLIM "
+"""""""""
+map <F1> :ProjectTreeToggle<cr>
+map <leader><F1> :ProjectsTree<cr>
+nnoremap <leader>js :JavaSearch -s declarations -x workspace<cr>
+nnoremap <leader>jc :JavaCorrect<cr>
+nnoremap <leader>jo :JavaImportOrganize<cr>
+nnoremap <leader>jg :JavaGetSet<cr>
+nnoremap <leader>jb :Mvn! -f ~/git/gcaba-io/source/back-end clean install<cr>
+
+nnoremap <leader>jds :JavaDebugStart localhost 8787<cr>
+nnoremap <F9> :JavaDebugBreakpointToggle<cr>
+nnoremap <leader>jdb :JavaDebugBreakpointRemove!<cr>
+
+nnoremap <F7> :JavaDebugStep over<cr>
+nnoremap <F8> :JavaDebugStep into<cr>
+nnoremap <S-F8> :JavaDebugStep return<cr>
+
+nnoremap <F5> :JavaDebugThreadResumeAll<cr>
+
+nnoremap <leader>pp :ProjectProblems<cr>
+nnoremap <leader>pt :ProjectTab 
+ 
+let g:EclimMakeLCD=0
+
+function! Standalone()
+    tabnext
+    edit ~/jboss-as-7.1.1.Final/standalone/configuration/standalone-io.xml
+endfunction
+map <F10> :call Standalone()<cr>
+
+"""""""
+" GIT "
+"""""""
+nnoremap <leader>gs :Gstatus<cr>
+nnoremap <leader>gc :Gcommit<cr>
+nnoremap <leader>gb :Gblame<cr>
+nnoremap <leader>gd :Gdiff<cr>
+nnoremap <leader>gh :!tig %
+nnoremap <leader>gv :!tig
+nnoremap <leader>gp :Git push<cr>
+nnoremap <leader>gl :Gpull<cr>
+
+""""""""""""
+" NERDTree "
+""""""""""""
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" map <C-n> :NERDTreeToggle<CR>
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" netrw "
+"""""""""
+" Toggle Vexplore with ctr-n
+function! ToggleVExplorer()
+    if exists("t:expl_buf_num")
+        let expl_win_num = bufwinnr(t:expl_buf_num)
+        if expl_win_num != -1
+            let cur_win_nr = winnr()
+            "exec expl_win_nr . 'wincmd w'
+            close
+            exec cur_win_nr . 'wincmd w'
+            unlet t:expl_buf_num
+        else
+            unlet t:expl_buf_num
+        endif
+    else
+        exec '1wincmd w'
+        Vexplore
+        let t:expl_buf_num = bufnr("%")
+    endif
+endfunction
+map <silent> <c-n> :call ToggleVExplorer()<cr>
+"Hit enter in the file browser to open the selected file with vsplit to the
+"right of the browser
+"let g:netrw_browse_split = 4
+"let g:netrw_altv = 1
+"default to tree mode
+let g:netrw_liststyle = 0
+"change directory to the current buffer when opening files
+set autochdir
+
+function! OnStart()
+    if argc() == 0 && !exists("s:std_in") 
+        ProjectTab rule-engine
+    endif
+endfunction
+autocmd VimEnter * call OnStart()
+
+"""""""""""""
+" Command-T "
+"""""""""""""
+let g:CommandTWildIgnore=&wildignore . ",**/target/*"
+let g:CommandTEncoding="UTF-8"
+
+""""""
+" Ag "
+""""""
+let g:ag_working_path_mode="r"
+nnoremap <leader>f :Ag "\b<C-R><C-W>\b"<CR>:cw<CR>
+nnoremap \ :Ag<space>
+
+"""""""""""""
+" Syntastic "
+"""""""""""""
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
