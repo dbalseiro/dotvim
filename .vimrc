@@ -20,8 +20,10 @@ Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/syntastic'
 "Plugin 'mileszs/ack.vim'
 Plugin 'rking/ag.vim'
+Plugin 'tpope/vim-surround'
 " " All of your Plugins must be added before the following line
-Bundle 'altercation/vim-colors-solarized'
+"Bundle 'altercation/vim-colors-solarized'
+Bundle 'morhetz/gruvbox'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -98,7 +100,8 @@ let mapleader=","
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 :set t_Co=256 " 256 colors
 :set background=dark
-:color solarized
+:color gruvbox
+let g:gruvbox_contrast_dark="medium"
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " STATUS LINE
@@ -129,8 +132,8 @@ noremap <leader>m :tabnext<cr>
 " SPLIT MAPS
 """"""""""""""""""""""
 cnoremap %% <C-R>=expand('%:h').'/'<cr>
-map <leader>s :split\|:edit %%<cr>
-map <leader>S :vsplit\|:edit %%<cr>
+map <leader>S :split\|:edit %%<cr>
+map <leader>s :vsplit\|:edit %%<cr>
 map <C-J> <C-W>j
 map <C-K> <C-W>k
 map <C-H> <C-W>h
@@ -195,13 +198,13 @@ autocmd InsertLeave * call ToggleRelativeOn()
 """""""""""""""""
 " ASANA PROJECT "
 """""""""""""""""
-map <leader>j :wa\|:make --directory=$ASANA_PATH clean asana<cr>
+map <leader>a :wa\|:make --directory=$ASANA_PATH clean asana<cr>
 
 """"""""""""""""""""""
 " EASY EDITING VIMRC "
 """"""""""""""""""""""
 nnoremap <silent> <leader>ve :e $MYVIMRC<CR>
-nnoremap <silent> <leader>vs :so $MYVIMRC<CR>
+nnoremap <silent> <leader>vs :w\|so $MYVIMRC<CR>
 
 
 """"""""
@@ -243,8 +246,8 @@ nnoremap <leader>gs :Gstatus<cr>
 nnoremap <leader>gc :Gcommit<cr>
 nnoremap <leader>gb :Gblame<cr>
 nnoremap <leader>gd :Gdiff<cr>
-nnoremap <leader>gh :!tig %
-nnoremap <leader>gv :!tig
+nnoremap <leader>gh :!tig %<cr>
+nnoremap <leader>gv :!tig<cr>
 nnoremap <leader>gp :Git push<cr>
 nnoremap <leader>gl :Gpull<cr>
 
@@ -318,3 +321,9 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+
+"""""""""
+" DBExt "
+"""""""""
+let g:dbext_default_profile_gcba = 'type=PGSQL:user=postgres:host=inscripcion.dev.syntagma.com.ar:dbname=dump20151009'
+let g:dbext_default_profile = 'gcba'
