@@ -3,6 +3,7 @@ autocmd!
 au bufreadpost,filereadpost *.drl set ft=drools
 au bufreadpost,filereadpost asana_comment.txt set ft=asana
 
+
 "VUNDLE
 set nocompatible
 set noshowmode
@@ -38,6 +39,7 @@ set guifont=Menlo\ for\ Powerline
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " BASIC EDITING CONFIGURATION
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd FileType java set tags=~/.ctags/gcaba.tags
 set nobackup
 set noswapfile
 set pastetoggle=<F2>
