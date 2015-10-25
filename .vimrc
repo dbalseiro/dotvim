@@ -112,10 +112,11 @@ let g:gruvbox_contrast_dark="medium"
 
 " Clear the search buffer when hitting return
 function! MapCR()
-  nnoremap <cr> :nohlsearch<cr>
+  nnoremap <leader><cr> :nohlsearch<cr>
 endfunction
 call MapCR()
 nnoremap <leader><leader> <c-^>
+nnoremap <leader>. :only<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " OPEN FILES IN DIRECTORY OF CURRENT FILE
@@ -214,11 +215,12 @@ nnoremap <silent> <leader>vs :w\|so $MYVIMRC<CR>
 """""""""
 map <F1> :ProjectTreeToggle<cr>
 map <leader><F1> :ProjectsTree<cr>
-nnoremap <leader>js :JavaSearch -s declarations -x workspace<cr>
+nnoremap <leader>js :JavaSearch -s workspace -x declarations<cr>
+nnoremap <leader>ja :JavaSearch -s workspace -x references<cr>
 nnoremap <leader>jc :JavaCorrect<cr>
 nnoremap <leader>jo :JavaImportOrganize<cr>
 nnoremap <leader>jg :JavaGetSet<cr>
-nnoremap <leader>jb :Mvn! -f ~/git/gcaba-io/source/back-end clean install<cr>
+nnoremap <leader>jb :w\|Mvn! -f ~/git/gcaba-io/source/back-end -Dmaven.test.skip=true clean install<cr>
 
 nnoremap <leader>jds :JavaDebugStart localhost 8787<cr>
 nnoremap <F9> :JavaDebugBreakpointToggle<cr>
@@ -327,5 +329,5 @@ let g:syntastic_check_on_wq = 0
 """""""""
 " DBExt "
 """""""""
-let g:dbext_default_profile_gcba = 'type=PGSQL:user=postgres:host=inscripcion.dev.syntagma.com.ar:dbname=dump20151009'
+let g:dbext_default_profile_gcba = 'type=PGSQL:user=postgres:host=gcaba-io.cmdb03agwzjb.us-east-1.rds.amazonaws.com:dbname=pruebas'
 let g:dbext_default_profile = 'gcba'
