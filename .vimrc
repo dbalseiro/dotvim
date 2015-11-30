@@ -12,7 +12,6 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
 Plugin 'Lokaltog/vim-powerline'
-Plugin 'tpope/vim-fugitive'
 Plugin 'L9'
 Plugin 'wincent/Command-T'
 Plugin 'nvie/vim-togglemouse'
@@ -21,7 +20,9 @@ Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/syntastic'
 "Plugin 'mileszs/ack.vim'
 Plugin 'rking/ag.vim'
+Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-repeat'
 " " All of your Plugins must be added before the following line
 "Bundle 'altercation/vim-colors-solarized'
 Bundle 'morhetz/gruvbox'
@@ -40,6 +41,7 @@ set guifont=Menlo\ for\ Powerline
 " BASIC EDITING CONFIGURATION
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd FileType java set tags=~/.ctags/gcaba.tags
+autocmd FileType php set tags=~/.ctags/gcaba_php.tags
 set nobackup
 set noswapfile
 set pastetoggle=<F2>
@@ -104,6 +106,7 @@ let mapleader=","
 :set background=dark
 :color gruvbox
 let g:gruvbox_contrast_dark="medium"
+hi Normal ctermbg=none
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " STATUS LINE
@@ -112,7 +115,7 @@ let g:gruvbox_contrast_dark="medium"
 
 " Clear the search buffer when hitting return
 function! MapCR()
-  nnoremap <leader><cr> :nohlsearch<cr>
+  nnoremap <silent> <leader><cr> :nohlsearch\|let @/=""<cr>
 endfunction
 call MapCR()
 nnoremap <leader><leader> <c-^>
@@ -179,6 +182,8 @@ map <leader>o :w\|:!./%<cr>
 set foldmethod=manual
 set nofoldenable
 
+command! ClearQuickfixList cexpr []
+nmap <leader>ff :ClearQuickfixList<cr>
 """"""""""""""""
 " LINE NUMBERS "
 """"""""""""""""
@@ -208,9 +213,9 @@ map <leader>a :wa\|:make --directory=$ASANA_PATH clean asana<cr>
 """"""""""""""""""""""
 nnoremap <silent> <leader>ve :e $MYVIMRC<CR>
 nnoremap <silent> <leader>vs :w\|so $MYVIMRC<CR>
+nnoremap <silent> <leader>l :w\|source %<cr>
 
-
-""""""""
+"""""""""
 " ECLIM "
 """""""""
 map <F1> :ProjectTreeToggle<cr>
@@ -233,6 +238,7 @@ nnoremap <S-F8> :JavaDebugStep return<cr>
 nnoremap <F5> :JavaDebugThreadResumeAll<cr>
 
 nnoremap <leader>pp :ProjectProblems<cr>
+nnoremap <leader>pr :ProjectRefreshAll<cr>
 nnoremap <leader>pt :ProjectTab 
  
 let g:EclimMakeLCD=0
@@ -294,13 +300,6 @@ let g:netrw_liststyle = 0
 "change directory to the current buffer when opening files
 set autochdir
 
-function! OnStart()
-    if argc() == 0 && !exists("s:std_in") 
-        ProjectTab rule-engine
-    endif
-endfunction
-autocmd VimEnter * call OnStart()
-
 """""""""""""
 " Command-T "
 """""""""""""
@@ -311,7 +310,8 @@ let g:CommandTEncoding="UTF-8"
 " Ag "
 """"""
 let g:ag_working_path_mode="r"
-nnoremap <leader>f :Ag "\b<C-R><C-W>\b"<CR>:cw<CR>
+"nnoremap <leader>f :Ag "\b<C-R><C-W>\b"<CR>:cw<CR>
+nnoremap <leader>F :execute "Ag " . shellescape(expand("<cWORD>"))<cr>:cw<cr>
 nnoremap \ :Ag<space>
 
 """""""""""""
@@ -331,5 +331,6 @@ au BufWriteCmd *.php write || :SyntasticCheck
 """""""""
 " DBExt "
 """""""""
-let g:dbext_default_profile_gcba = 'type=PGSQL:user=postgres:host=gcaba-io.cmdb03agwzjb.us-east-1.rds.amazonaws.com:dbname=pruebas'
+let g:dbext_default_profile_gcba = 'type=PGSQL:user=postgres:host=amazon-io:dbname=dump20151031'
 let g:dbext_default_profile = 'gcba'
+
