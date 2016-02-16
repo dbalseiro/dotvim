@@ -23,6 +23,7 @@ Plugin 'rking/ag.vim'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-repeat'
+Plugin 'jeetsukumaran/vim-buffergator'
 " " All of your Plugins must be added before the following line
 "Bundle 'altercation/vim-colors-solarized'
 Bundle 'morhetz/gruvbox'
@@ -47,6 +48,13 @@ set noswapfile
 set pastetoggle=<F2>
 set nowrap "dont like wrapping
 set mouse=a
+
+inoremap nn ñ
+inoremap aa á
+inoremap ee é
+inoremap ii í
+inoremap oo ó
+inoremap uu ú
 
 " allow unsaved background buffers and remember marks/undo for them
 set hidden
@@ -130,7 +138,7 @@ map <leader>e :tabnew\|:edit %%<cr>
 """""""""""""""""""""
 " TAB MAPS
 """"""""""""""""""""""
-noremap <leader>b :tabnew<cr>
+noremap <leader>B :tabnew<cr>
 noremap <leader>n :tabprevious<cr>
 noremap <leader>m :tabnext<cr>
 
@@ -334,3 +342,8 @@ au BufWriteCmd *.php write || :SyntasticCheck
 let g:dbext_default_profile_gcba = 'type=PGSQL:user=postgres:host=amazon-io:dbname=dump20151031'
 let g:dbext_default_profile = 'gcba'
 
+"""""""""""""""
+" Buffergator "
+"""""""""""""""
+let g:buffergator_suppress_keymaps = 1
+nnoremap <leader>b :BuffergatorOpen<cr>
