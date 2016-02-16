@@ -23,9 +23,9 @@ Plugin 'rking/ag.vim'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-repeat'
-Plugin 'jeetsukumaran/vim-buffergator'
+"Plugin 'jeetsukumaran/vim-buffergator'
 " " All of your Plugins must be added before the following line
-"Bundle 'altercation/vim-colors-solarized'
+Bundle 'altercation/vim-colors-solarized'
 Bundle 'morhetz/gruvbox'
 
 call vundle#end()            " required
@@ -36,7 +36,6 @@ set encoding=utf-8
 set fillchars+=stl:\ ,stlnc:\
 "set term=xterm-256color
 set termencoding=utf-8
-set guifont=Menlo\ for\ Powerline
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " BASIC EDITING CONFIGURATION
@@ -112,7 +111,7 @@ let mapleader=","
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 :set t_Co=256 " 256 colors
 :set background=dark
-:color gruvbox
+:color solarized
 let g:gruvbox_contrast_dark="medium"
 hi Normal ctermbg=none
 
