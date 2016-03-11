@@ -24,7 +24,14 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-repeat'
 Plugin 'jeetsukumaran/vim-buffergator'
-" " All of your Plugins must be added before the following line
+
+Plugin 'MarcWeber/vim-addon-mw-utils'
+Plugin 'tomtom/tlib_vim'
+Plugin 'garbas/vim-snipmate'
+"Plugin 'SirVer/ultisnips'
+"" Optional:
+Plugin 'honza/vim-snippets'
+" All of your Plugins must be added before the following line
 "Bundle 'altercation/vim-colors-solarized'
 Bundle 'morhetz/gruvbox'
 
@@ -155,7 +162,7 @@ map <C-L> <C-W>l
 map <C-S> <C-W><S-T>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" MULTIPURPOSE TAB KEY
+" MULTIPURPOSE TAB KEYg
 " Indent if we're at the beginning of a line. Else, do completion.
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! InsertTabWrapper()
@@ -168,6 +175,18 @@ function! InsertTabWrapper()
 endfunction
 inoremap <tab> <c-r>=InsertTabWrapper()<cr>
 inoremap <s-tab> <c-x><c-u>
+""""""""""""
+" UltiSnip "
+""""""""""""
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+"let g:UltiSnipsExpandTrigger="<c-tab>"
+"let g:UltiSnipsJumpForwardTrigger="<c-b>"
+"let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+imap <C-Z> <Plug>snipMateNextOrTrigger
+smap <C-Z> <Plug>snipMateNextOrTrigger
+
+" If you want :UltiSnipsEdit to split your window.
+"let g:UltiSnipsEditSplit="vertical"
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " RENAME CURRENT FILE
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -181,6 +200,19 @@ function! RenameFile()
     endif
 endfunction
 map <leader>r :call RenameFile()<cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" DUPLICATE CURRENT FILE
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function! DuplicateFile()
+    let old_name = expand('%')
+    let new_name = input('New file name: ', expand('%'), 'file')
+    if new_name != '' && new_name != old_name
+        exec ':saveas ' . new_name
+        redraw!
+    endif
+endfunction
+map <leader>d :call DuplicateFile()<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " RUNNING TESTS
@@ -235,6 +267,17 @@ nnoremap <leader>jo :JavaImportOrganize<cr>
 nnoremap <leader>jg :JavaGetSet<cr>
 nnoremap <leader>jb :w\|Mvn! -f ~/git/gcaba-io/source/back-end -Dmaven.test.skip=true clean install<cr>
 
+function! CompilePAD()
+    Mvn! -f ~/git/padhome/pad/pad_parent -Dmaven.test.skip=true clean install -Pdevelopment-local
+endfunction
+command! MakePAD :call CompilePAD()
+
+function! CompileJBPM()
+    Mvn! -f ~/git/padhome/pinkflow-base-project/pinkflow_parent -Dmaven.test.skip=true clean install -Pdevelopment-local
+endfunction
+command! MakeJBPM :call CompileJBPM()
+command! PadHome :cd $pad_home
+
 nnoremap <leader>jds :JavaDebugStart localhost 8787<cr>
 nnoremap <F9> :JavaDebugBreakpointToggle<cr>
 nnoremap <leader>jdb :JavaDebugBreakpointRemove!<cr>
@@ -257,6 +300,11 @@ function! Standalone()
 endfunction
 map <F10> :call Standalone()<cr>
 
+function! StandalonePAD()
+    tabnext
+    edit ~/jboss-as-7.1.1.Final/standalone/configuration/standalone-pad.xml
+endfunction
+map <F9> :call StandalonePAD()<cr>
 """""""
 " GIT "
 """""""
@@ -336,6 +384,7 @@ let g:syntastic_check_on_wq = 0
 
 let g:syntastic_php_checkers = ['php']
 au BufWriteCmd *.php write || :SyntasticCheck
+
 """""""""
 " DBExt "
 """""""""
@@ -347,3 +396,18 @@ let g:dbext_default_profile = 'gcba'
 """""""""""""""
 let g:buffergator_suppress_keymaps = 1
 nnoremap <leader>b :BuffergatorOpen<cr>
+
+
+""""""""""""""""""
+"Build All gcaba "
+""""""""""""""""""
+function! BuildAllGCABA()
+    execute ":ProjectBuild autorizacion-ws"
+    execute ":ProjectBuild autorizacion-ws"
+    execute ":ProjectBuild autorizacion-ws"
+    execute ":ProjectBuild autorizacion-ws"
+    execute ":ProjectBuild autorizacion-ws"
+    execute ":ProjectRefreshAll"
+endfunction
+map <leader>ba :call BuildAllGCABA()<cr>
+
