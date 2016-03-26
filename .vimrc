@@ -65,6 +65,7 @@ inoremap ii í
 inoremap oo ó
 inoremap uu ú
 
+
 " allow unsaved background buffers and remember marks/undo for them
 set hidden
 " remember more commands and search history
@@ -270,6 +271,8 @@ nnoremap <leader>jo :JavaImportOrganize<cr>
 nnoremap <leader>jg :JavaGetSet<cr>
 nnoremap <leader>jb :w\|Mvn! -f ~/git/gcaba-io/source/back-end -Dmaven.test.skip=true clean install<cr>
 
+
+
 function! CompilePAD()
     Mvn! -f ~/git/padhome/pad/pad_parent -Dmaven.test.skip=true clean install -Pdevelopment-local
 endfunction
@@ -279,7 +282,21 @@ function! CompileJBPM()
     Mvn! -f ~/git/padhome/pinkflow-base-project/pinkflow_parent -Dmaven.test.skip=true clean install -Pdevelopment-local
 endfunction
 command! MakeJBPM :call CompileJBPM()
-command! PadHome :cd $pad_home
+
+function! CompilePADC()
+    Mvn! -f ~/git/padcirculohome/pad-circulo -Dmaven.test.skip=true clean install -Pdevelopment
+endfunction
+command! MakePADC :call CompilePADC()
+
+function! CompileJBPMC()
+    Mvn! -f ~/git/padcirculohome/pinkflow-circulo -Dmaven.test.skip=true clean install -Pdevelopment
+endfunction
+command! MakeJBPMC :call CompileJBPMC()
+
+
+
+
+command! MakeMBF :Dispatch ssh dbalseiro@localhost -p 8022 'cd /cygdrive/c/workspace/MercedesBenz/git/mb-circulo-mbfonline/PAD; ./build.bat'
 
 nnoremap <leader>jds :JavaDebugStart localhost 8787<cr>
 nnoremap <F9> :JavaDebugBreakpointToggle<cr>
@@ -377,12 +394,13 @@ let g:ctrlp_working_path_mode = 'ra'
 
 let g:ctrlp_root_markers = ['pom.xml']
 
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+
 
 """"""
 " Ag "
 """"""
 let g:ag_working_path_mode="r"
-"nnoremap <leader>f :Ag "\b<C-R><C-W>\b"<CR>:cw<CR>
 nnoremap <leader>F :execute "Ag " . shellescape(expand("<cWORD>"))<cr>:cw<cr>
 nnoremap \ :Ag<space>
 
@@ -404,8 +422,15 @@ au BufWriteCmd *.php write || :SyntasticCheck
 """""""""
 " DBExt "
 """""""""
-let g:dbext_default_profile_gcba = 'type=PGSQL:user=postgres:host=amazon-io:dbname=dump20151031'
-let g:dbext_default_profile = 'gcba'
+let g:dbext_default_profile_gcba = 'type=PGSQL:user=inscripcion_user:host=localhost:dbname=ciclolectivo2016'
+let g:dbext_default_profile_pad = 'type=ORA:srvname=localhost:user=padstage:passwd=padstage'
+
+augroup gcba
+    au!
+    autocmd BufRead */gcaba_io/* DBSetOption profile=pad
+augroup end
+
+let g:dbext_default_profile = 'pad'
 
 """""""""""""""
 " Buffergator "
@@ -459,7 +484,7 @@ augroup omnisharp_commands
     " Synchronous build (blocks Vim)
     "autocmd FileType cs nnoremap <F5> :wa!<cr>:OmniSharpBuild<cr>
     " Builds can also run asynchronously with vim-dispatch installed
-    autocmd FileType cs nnoremap <leader>b :wa!<cr>:OmniSharpBuildAsync<cr>
+    autocmd FileType cs nnoremap <leader>B :wa!<cr>:OmniSharpBuildAsync<cr>
     " automatic syntax check on events (TextChanged requires Vim 7.4)
     autocmd BufEnter,TextChanged,InsertLeave *.cs SyntasticCheck
 
@@ -535,4 +560,6 @@ function! BuildAllGCABA()
     execute ":ProjectRefreshAll"
 endfunction
 map <leader>ba :call BuildAllGCABA()<cr>
+
+
 
