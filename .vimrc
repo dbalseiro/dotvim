@@ -5,8 +5,8 @@ au bufreadpost,filereadpost asana_comment.txt set ft=asana
 
 
 "VUNDLE
-set nocompatible
 set noshowmode
+set nocompatible
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -18,11 +18,12 @@ Plugin 'nvie/vim-togglemouse'
 Plugin 'ivalkeen/vim-simpledb'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/syntastic'
-Plugin 'OmniSharp/omnisharp-vim'
+"Plugin 'OmniSharp/omnisharp-vim'
 "Plugin 'mileszs/ack.vim'
 Plugin 'rking/ag.vim'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
+Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'tpope/vim-repeat'
 Plugin 'jeetsukumaran/vim-buffergator'
 
@@ -52,19 +53,14 @@ set guifont=Menlo\ for\ Powerline
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd FileType java set tags=~/.ctags/gcaba.tags
 autocmd FileType php set tags=~/.ctags/gcaba_php.tags
+
+autocmd FileType java,php,js autocmd BufWritePre <buffer> %s/\s\+$//e
+
 set nobackup
 set noswapfile
 set pastetoggle=<F2>
 set nowrap "dont like wrapping
 set mouse=a
-
-inoremap nn ñ
-inoremap aa á
-inoremap ee é
-inoremap ii í
-inoremap oo ó
-inoremap uu ú
-
 
 " allow unsaved background buffers and remember marks/undo for them
 set hidden
@@ -163,6 +159,8 @@ map <C-K> <C-W>k
 map <C-H> <C-W>h
 map <C-L> <C-W>l
 map <C-S> <C-W><S-T>
+
+nmap <c-s-h> <c-w><c-t><c-w>H
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " MULTIPURPOSE TAB KEYg
@@ -269,32 +267,30 @@ nnoremap <leader>ja :JavaSearch -s workspace -x references<cr>
 nnoremap <leader>jc :JavaCorrect<cr>
 nnoremap <leader>jo :JavaImportOrganize<cr>
 nnoremap <leader>jg :JavaGetSet<cr>
-nnoremap <leader>jb :w\|Mvn! -f ~/git/gcaba-io/source/back-end -Dmaven.test.skip=true clean install<cr>
+nnoremap <leader>jb :w\|Mvn -f ~/git/gcaba-io/source/back-end -Dmaven.test.skip=true clean install<cr>
 
 
 
 function! CompilePAD()
-    Mvn! -f ~/git/padhome/pad/pad_parent -Dmaven.test.skip=true clean install -Pdevelopment-local
+    Mvn -f ~/git/padhome/pad/pad_parent -Dmaven.test.skip=true clean install -Pdevelopment-local
 endfunction
 command! MakePAD :call CompilePAD()
 
 function! CompileJBPM()
-    Mvn! -f ~/git/padhome/pinkflow-base-project/pinkflow_parent -Dmaven.test.skip=true clean install -Pdevelopment-local
+    Mvn -f ~/git/padhome/pinkflow-base-project/pinkflow_parent -Dmaven.test.skip=true clean install -Pdevelopment-local
 endfunction
 command! MakeJBPM :call CompileJBPM()
 
 function! CompilePADC()
-    Mvn! -f ~/git/padcirculohome/pad-circulo -Dmaven.test.skip=true clean install -Pdevelopment
+    Mvn -f ~/git/padcirculohome/pad-circulo -Dmaven.test.skip=true clean install -Pdevelopment
 endfunction
 command! MakePADC :call CompilePADC()
 
 function! CompileJBPMC()
-    Mvn! -f ~/git/padcirculohome/pinkflow-circulo -Dmaven.test.skip=true clean install -Pdevelopment
+    Mvn -f ~/git/padcirculohome/pinkflow-circulo -Dmaven.test.skip=true -Dmaven.color=false clean install -Pdevelopment
 endfunction
+
 command! MakeJBPMC :call CompileJBPMC()
-
-
-
 
 command! MakeMBF :Dispatch ssh dbalseiro@localhost -p 8022 'cd /cygdrive/c/workspace/MercedesBenz/git/mb-circulo-mbfonline/PAD; ./build.bat'
 
@@ -312,6 +308,7 @@ nnoremap <leader>pp :ProjectProblems<cr>
 nnoremap <leader>pr :ProjectRefreshAll<cr>
 nnoremap <leader>pt :ProjectTab 
  
+let g:EclimMvnCompilerAdditionalErrorFormat='\[ERROR]\ %f:[%l\\,%v]\ %m,'
 let g:EclimMakeLCD=0
 
 function! Standalone()
@@ -389,14 +386,13 @@ set runtimepath^=~/.vim/bundle/ctrlp.vim
 
 let g:ctrlp_map = '<c-s-p>'
 let g:ctrlp_cmd = 'CtrlP'
-
 let g:ctrlp_working_path_mode = 'ra'
-
 let g:ctrlp_root_markers = ['pom.xml']
 
-let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
 
-
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]target',
+\}
 """"""
 " Ag "
 """"""
