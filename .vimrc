@@ -56,7 +56,29 @@ autocmd FileType php set tags=~/.ctags/gcaba_php.tags
 
 autocmd FileType java,php,js autocmd BufWritePre <buffer> %s/\s\+$//e
 
-set nobackup
+function! BackSpaceDiego()
+    if empty(getline('.'))
+        " Si es una linea vacia, la borro y me posiciono al final de la de
+        " arriba
+        execute 'normal ddk$'
+    else
+        "Si no es una linea vacia y estoy en la primera posicion, voy arriba y
+        "unifico las lineas (y borro el caracter que queda en el medio.
+        let col = col('.') - 1
+        if !col
+            execute 'normal kJx'
+
+        "Si no es una linea vacia y tampoco estoy en la primera posicion de la
+        "linea... backspace normal
+        else
+            execute 'normal X'
+        endif
+    endif
+endfunction
+
+nnoremap <s-bs> o<esc>
+nnoremap <silent> <bs> :call BackSpaceDiego()<cr>
+
 set noswapfile
 set pastetoggle=<F2>
 set nowrap "dont like wrapping
@@ -423,12 +445,12 @@ au BufWriteCmd *.php write || :SyntasticCheck
 let g:dbext_default_profile_gcba = 'type=PGSQL:user=inscripcion_user:host=localhost:dbname=ciclolectivo2016'
 let g:dbext_default_profile_pad = 'type=ORA:srvname=localhost:user=padstage:passwd=padstage'
 
+let g:dbext_default_profile = 'pad'
 augroup gcba
     au!
-    autocmd BufRead */gcaba_io/* DBSetOption profile=pad
+    autocmd BufRead */gcaba_io/* DBSetOption profile=gcba
 augroup end
 
-let g:dbext_default_profile = 'pad'
 
 """""""""""""""
 " Buffergator "
