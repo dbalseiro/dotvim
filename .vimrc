@@ -30,7 +30,7 @@ Plugin 'jeetsukumaran/vim-buffergator'
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
-Plugin 'tpope/vim-dispatch'
+"Plugin 'tpope/vim-dispatch'
 "Plugin 'SirVer/ultisnips'
 "" Optional:
 Plugin 'honza/vim-snippets'
@@ -43,7 +43,7 @@ filetype plugin indent on    " required
 
 let g:Powerline_symbols = 'fancy'
 set encoding=utf-8
-set fillchars+=stl:\ ,stlnc:\
+set fillchars+=stl:\ ,stlnc:\ 
 "set term=xterm-256color
 set termencoding=utf-8
 set guifont=Menlo\ for\ Powerline
@@ -178,13 +178,11 @@ noremap <leader>m :tabnext<cr>
 cnoremap %% <C-R>=expand('%:h').'/'<cr>
 map <leader>S :split\|:edit %%<cr>
 map <leader>s :vsplit\|:edit %%<cr>
-map <C-J> <C-W>j
-map <C-K> <C-W>k
-map <C-H> <C-W>h
-map <C-L> <C-W>l
-map <C-S> <C-W><S-T>
-
-nmap <c-s-h> <c-w><c-t><c-w>H
+map <c-j> <c-w>j
+map <c-k> <c-w>k
+map <c-h> <c-w>h
+map <c-l> <c-w>l
+map <c-s> <c-w><s-t>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " MULTIPURPOSE TAB KEYg
@@ -272,7 +270,7 @@ autocmd InsertLeave * call ToggleRelativeOn()
 """""""""""""""""
 " ASANA PROJECT "
 """""""""""""""""
-map <leader>a :wa\|:make --directory=$ASANA_PATH clean asana<cr>
+map <leader>a :wa\|:lcd $ASANA_PATH\|:make clean asana<cr>
 
 """"""""""""""""""""""
 " EASY EDITING VIMRC "
@@ -573,13 +571,39 @@ set hidden
 """"""""""""""""""
 function! BuildAllGCABA()
     execute ":ProjectBuild autorizacion-ws"
-    execute ":ProjectBuild autorizacion-ws"
-    execute ":ProjectBuild autorizacion-ws"
-    execute ":ProjectBuild autorizacion-ws"
-    execute ":ProjectBuild autorizacion-ws"
+    execute ":ProjectBuild back-end"
+    execute ":ProjectBuild business-entities"
+    execute ":ProjectBuild business-model"
+    execute ":ProjectBuild rule-engine"
+    execute ":ProjectBuild services-api"
     execute ":ProjectRefreshAll"
 endfunction
 map <leader>ba :call BuildAllGCABA()<cr>
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Fijarse si existe el directorio antes de grabar... si no preguntar para "
+" crear                                                                   "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+augroup vimrc-auto-mkdir
+    autocmd!
+    autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
 
+    function! s:auto_mkdir(dir, force)
+        if !isdirectory(a:dir) && (a:force || input("'" . a:dir . "' no existe. Crear [y/N]") =~? '^y\%[es]$')
+            call mkdir(iconv(a:dir, &encoding, &termencoding), 'p')
+        endif
+    endfunction
+augroup END
+
+
+" Automatically open, but do not go to (if there are errors) the quickfix /
+" location list window, or close it when is has become empty.
+"
+" Note: Must allow nesting of autocmds to enable any customizations for quickfix
+" buffers.
+" Note: Normally, :cwindow jumps to the quickfix window if the command opens it
+" (but not if it's already open). However, as part of the autocmd, this doesn't
+" seem to happen.
+autocmd QuickFixCmdPost [^l]* nested cwindow
+autocmd QuickFixCmdPost    l* nested lwindow
