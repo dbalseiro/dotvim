@@ -19,6 +19,8 @@ Plugin 'L9'
 Plugin 'nvie/vim-togglemouse'
 Plugin 'ivalkeen/vim-simpledb'
 Plugin 'scrooloose/nerdcommenter'
+Plugin 'scrooloose/nerdtree'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'scrooloose/syntastic'
 "Plugin 'OmniSharp/omnisharp-vim'
 "Plugin 'mileszs/ack.vim'
@@ -28,6 +30,8 @@ Plugin 'tpope/vim-surround'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'tpope/vim-repeat'
 Plugin 'jeetsukumaran/vim-buffergator'
+
+Plugin 'mhinz/vim-startify'
 
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
@@ -39,6 +43,9 @@ Plugin 'terryma/vim-multiple-cursors'
 "Plugin 'SirVer/ultisnips'
 "" Optional:
 Plugin 'honza/vim-snippets'
+
+"Este deberia ser el ultimo plugin en cargarse
+Plugin 'ryanoasis/vim-devicons'
 " All of your Plugins must be added before the following line
 "Bundle 'altercation/vim-colors-solarized'
 Bundle 'morhetz/gruvbox'
@@ -314,6 +321,16 @@ nnoremap <silent> <leader>ve :e $MYVIMRC<CR>
 nnoremap <silent> <leader>vs :w\|so $MYVIMRC<CR>
 nnoremap <silent> <leader>l :w\|source %<cr>
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Remember cursor position between vim sessions
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd BufReadPost *
+    \ if line("'\"") > 0 && line("'\"") <= line("$") |
+    \   execute "normal! g'\"" |
+    \ endif
+autocmd BufRead * normal zz
+"^ center buffer around cursor when opening file
+
 """"""""""""
 " UltiSnip "
 """"""""""""
@@ -399,10 +416,33 @@ nnoremap <leader>gl :Gpull<cr>
 """"""""""""
 " NERDTree "
 """"""""""""
-" autocmd StdinReadPre * let s:std_in=1
-" autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-" map <C-n> :NERDTreeToggle<CR>
-" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+autocmd StdinReadPre * let s:std_in=1
+"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+map <C-t> :NERDTreeToggle<CR>
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+let NERDTreeShowHidden=1
+
+function! NERDTreeHighlightFile(extension, fg, bg)
+    exec 'autocmd FileType nerdtree highlight '.a:extension.' ctermbg='.a:bg.' ctermfg='.a:fg
+    exec 'autocmd FileType nerdtree syn match '.a:extension.' #^\s\+.*'.a:extension.'$#'
+endfunction
+
+call NERDTreeHighlightFile('java', 'blue', 'none')
+call NERDTreeHighlightFile('php', 'blue', 'none')
+call NERDTreeHighlightFile('config', 'yellow', 'none')
+call NERDTreeHighlightFile('conf', 'yellow', 'none')
+call NERDTreeHighlightFile('json', 'yellow', 'none')
+call NERDTreeHighlightFile('xml', 'yellow', 'none')
+call NERDTreeHighlightFile('html', 'cyan', 'none')
+call NERDTreeHighlightFile('js', 'cyan', 'none')
+call NERDTreeHighlightFile('css', 'cyan', 'none')
+call NERDTreeHighlightFile('drl', 'red', 'none')
+call NERDTreeHighlightFile('bpmn', 'red', 'none')
+call NERDTreeHighlightFile('md', 'red', 'none')
+call NERDTreeHighlightFile('sh', 'blue', 'none')
+call NERDTreeHighlightFile('sql', 'blue', 'none')
+call NERDTreeHighlightFile('\*', 'magenta', 'none')
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " netrw "
 """""""""
@@ -504,3 +544,13 @@ let g:multi_cursor_next_key='<C-d>'
 let g:multi_cursor_prev_key='<C-p>'
 let g:multi_cursor_skip_key='<C-x>'
 let g:multi_cursor_quit_key='<Esc>'
+
+""""""""""""
+" startify "
+""""""""""""
+let g:startify_bookmarks = [
+            \'/Users/diego/jboss-as-7.1.1.Final/standalone/configuration/standalone-io.xml',
+            \'/Users/diego/jboss-as-7.1.1.Final/standalone/configuration/standalone-pad.xml',
+            \'/Users/diego/jboss-as-7.1.1.Final/standalone/configuration/standalone.xml',
+            \'/Users/diego/jboss-as-7.1.1.Final/standalone/configuration/standaloneTL.xml']
+
