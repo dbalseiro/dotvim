@@ -31,6 +31,8 @@ Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'tpope/vim-repeat'
 Plugin 'jeetsukumaran/vim-buffergator'
 
+Plugin 'nathanaelkane/vim-indent-guides'
+
 Plugin 'mhinz/vim-startify'
 
 Plugin 'MarcWeber/vim-addon-mw-utils'
@@ -358,26 +360,24 @@ nnoremap <leader>jg :JavaGetSet<cr>
 nnoremap <leader>jb :w\|Mvn -f ~/git/gcaba-io/source/back-end -Dmaven.test.skip=true clean install<cr>
 
 function! CompilePAD()
-    Mvn -f ~/git/padhome/pad/pad_parent\
-    -Dmaven.test.skip=true clean install -Pdevelopment-local
+    Mvn -f ~/git/padhome/pad/pad_parent -Dmaven.test.skip=true clean install -Pdevelopment-local
 endfunction
 command! MakePAD :call CompilePAD()
 
 function! CompileJBPM()
-    Mvn -f ~/git/padhome/pinkflow-base-project/pinkflow_parent\
-    -Dmaven.test.skip=true clean install -Pdevelopment-local
+    Mvn -f ~/git/padhome/pinkflow-base-project/pinkflow_parent -Dmaven.test.skip=true clean install -Pdevelopment-local
 endfunction
 command! MakeJBPM :call CompileJBPM()
 
+command! MakeMBF :call CompilePAD() | call CompileJBPM()
+
 function! CompilePADC()
-    Mvn -f ~/git/padcirculohome/pad-circulo\
-    -Dmaven.test.skip=true clean install -Pdevelopment
+    Mvn -f ~/git/padcirculohome/pad-circulo -Dmaven.test.skip=true clean install -Pdevelopment
 endfunction
 command! MakePADC :call CompilePADC()
 
 function! CompileJBPMC()
-    Mvn -f ~/git/padcirculohome/pinkflow-circulo\
-    -Dmaven.test.skip=true -Dmaven.color=false clean install -Pdevelopment
+    Mvn -f ~/git/padcirculohome/pinkflow-circulo -Dmaven.test.skip=true -Dmaven.color=false clean install -Pdevelopment
 endfunction
 
 command! MakeJBPMC :call CompileJBPMC()
@@ -421,6 +421,8 @@ autocmd StdinReadPre * let s:std_in=1
 map <C-t> :NERDTreeToggle<CR>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 let NERDTreeShowHidden=1
+"quiero seguir usando netrw para explora directorios
+let g:NERDTreeHijackNetrw=0
 
 function! NERDTreeHighlightFile(extension, fg, bg)
     exec 'autocmd FileType nerdtree highlight '.a:extension.' ctermbg='.a:bg.' ctermfg='.a:fg
@@ -443,7 +445,7 @@ call NERDTreeHighlightFile('sh', 'blue', 'none')
 call NERDTreeHighlightFile('sql', 'blue', 'none')
 call NERDTreeHighlightFile('\*', 'magenta', 'none')
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""
 " netrw "
 """""""""
 " Toggle Vexplore with ctr-n
@@ -554,3 +556,9 @@ let g:startify_bookmarks = [
             \'/Users/diego/jboss-as-7.1.1.Final/standalone/configuration/standalone.xml',
             \'/Users/diego/jboss-as-7.1.1.Final/standalone/configuration/standaloneTL.xml']
 
+let g:startify_skiplist = ['asana_comment.txt', 'COMMIT_EDITMSG']
+
+"""""""""""""""""
+" Indent Guides "
+"""""""""""""""""
+let g:indent_guides_guide_size = 1
