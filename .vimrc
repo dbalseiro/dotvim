@@ -1,9 +1,5 @@
 autocmd!
 
-au bufreadpost,filereadpost *.drl set ft=drools
-au bufreadpost,filereadpost asana_comment.txt set ft=asana
-
-
 "VUNDLE
 set noshowmode
 set nocompatible
@@ -11,45 +7,31 @@ filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
-"Plugin 'Lokaltog/vim-powerline'
-Plugin 'bling/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'L9'
-"Plugin 'wincent/Command-T'
+
 Plugin 'nvie/vim-togglemouse'
-Plugin 'ivalkeen/vim-simpledb'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/nerdtree'
 Plugin 'Xuyuanp/nerdtree-git-plugin'
-Plugin 'scrooloose/syntastic'
-"Plugin 'OmniSharp/omnisharp-vim'
-"Plugin 'mileszs/ack.vim'
-Plugin 'rking/ag.vim'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
-Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'tpope/vim-repeat'
-Plugin 'jeetsukumaran/vim-buffergator'
-
 Plugin 'nathanaelkane/vim-indent-guides'
-
-Plugin 'mhinz/vim-startify'
-
-Plugin 'MarcWeber/vim-addon-mw-utils'
-Plugin 'tomtom/tlib_vim'
-Plugin 'garbas/vim-snipmate'
-
 Plugin 'airblade/vim-gitgutter'
 Plugin 'terryma/vim-multiple-cursors'
-"Plugin 'tpope/vim-dispatch'
-"Plugin 'SirVer/ultisnips'
-"" Optional:
-Plugin 'honza/vim-snippets'
 
+Plugin 'tpope/vim-rails'
+
+set rtp+=/usr/local/opt/fzf
+Plugin 'junegunn/fzf'
+Plugin 'junegunn/fzf.vim'
+
+Plugin 'bling/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 "Este deberia ser el ultimo plugin en cargarse
 Plugin 'ryanoasis/vim-devicons'
-" All of your Plugins must be added before the following line
-"Bundle 'altercation/vim-colors-solarized'
+
+Plugin 'NLKNguyen/papercolor-theme'
+Plugin 'junegunn/seoul256.vim'
 Bundle 'morhetz/gruvbox'
 
 call vundle#end()            " required
@@ -59,9 +41,8 @@ filetype plugin indent on    " required
 " BEAUTIFICATION:
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_powerline_fonts = 1
-let g:airline_theme = 'molokai'
-"let g:Powerline_symbols = 'fancy'
+let g:airline_powerline_fonts = 0
+let g:airline_theme = 'minimalist'
 set encoding=utf-8
 set fillchars+=stl:\ ,stlnc:\ 
 "set term=xterm-256color
@@ -77,12 +58,10 @@ autocmd FileType php set tags=~/.ctags/gcaba_php.tags
 
 set list
 set listchars=eol:¬,tab:▸\ ,trail:·,nbsp:·
-let &colorcolumn="80,".join(range(120,999),",")
+"let &colorcolumn="80,120"
 
 "delete trailing
 nnoremap <silent> <F6> :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
-
-autocmd FileType java,php,js autocmd BufWritePre <buffer> %s/\s\+$//e
 
 function! BackSpaceDiego()
     if empty(getline('.'))
@@ -163,16 +142,44 @@ let mapleader=","
 " Fix slow O inserts
 :set timeout timeoutlen=1000 ttimeoutlen=100
 
+" wrap :cnext/:cprevious and :lnext/:lprevious
+function! WrapCommand(direction, prefix)
+    if a:direction == "up"
+        try
+            execute a:prefix . "previous"
+        catch /^Vim\%((\a\+)\)\=:E553/
+            execute a:prefix . "last"
+        catch /^Vim\%((\a\+)\)\=:E\%(776\|42\):/
+        endtry
+    elseif a:direction == "down"
+        try
+            execute a:prefix . "next"
+        catch /^Vim\%((\a\+)\)\=:E553/
+            execute a:prefix . "first"
+        catch /^Vim\%((\a\+)\)\=:E\%(776\|42\):/
+        endtry
+    endif
+endfunction
 
+" <Home> and <End> go up and down the quickfix list and wrap around
+nnoremap <silent> {{ :call WrapCommand('up', 'c')<CR>
+nnoremap <silent> }}  :call WrapCommand('down', 'c')<CR>
+
+" <C-Home> and <C-End> go up and down the location list and wrap around
+nnoremap <silent> [[ :call WrapCommand('up', 'l')<CR>
+nnoremap <silent> ]]  :call WrapCommand('down', 'l')<CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " COLOR:
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 :set t_Co=256 " 256 colors
 :set background=dark
-:color gruvbox
-let g:gruvbox_contrast_dark="medium"
-hi Normal ctermbg=none
+":color gruvbox
+":colorscheme PaperColor
+let g:seoul256_background = 256
+colo seoul256
+"let g:gruvbox_contrast_dark="hard"
+"hi Normal ctermbg=none
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " STATUS LINE:
@@ -284,7 +291,7 @@ map <leader>d :call DuplicateFile()<cr>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " RUNNING TESTS:
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <leader>o :w\|:!./%<cr>
+map <leader>t :w\|:!./%<cr>
 
 set foldmethod=manual
 set nofoldenable
@@ -306,15 +313,10 @@ function! ToggleRelativeOn()
     set relativenumber
     set number
 endfunction
-autocmd FocusLost * call ToggleNumbersOn()
-autocmd FocusGained * call ToggleRelativeOn()
-autocmd InsertEnter * call ToggleNumbersOn()
-autocmd InsertLeave * call ToggleRelativeOn()
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" ASANA PROJECT:
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <leader>a :wa\|:lcd $ASANA_PATH\|:make clean asana<cr>
+autocmd FocusLost   * if &buftype != 'terminal' | call ToggleNumbersOn() | endif
+autocmd FocusGained * if &buftype != 'terminal' | call ToggleNumbersOn() | endif
+autocmd InsertEnter * if &buftype != 'terminal' | call ToggleNumbersOn() | endif
+autocmd InsertLeave * if &buftype != 'terminal' | call ToggleNumbersOn() | endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " EASY EDITING VIMRC:
@@ -332,74 +334,6 @@ autocmd BufReadPost *
     \ endif
 autocmd BufRead * normal zz
 "^ center buffer around cursor when opening file
-
-""""""""""""
-" UltiSnip "
-""""""""""""
-" Trigger configuration. Do not use <tab> 
-" "if you use https://github.com/Valloric/YouCompleteMe.
-"let g:UltiSnipsExpandTrigger="<c-tab>"
-"let g:UltiSnipsJumpForwardTrigger="<c-b>"
-"let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-imap <C-Z> <Plug>snipMateNextOrTrigger
-smap <C-Z> <Plug>snipMateNextOrTrigger
-
-" If you want :UltiSnipsEdit to split your window.
-"let g:UltiSnipsEditSplit="vertical"
-
-"""""""""
-" eclim "
-"""""""""
-map <F1> :ProjectTreeToggle<cr>
-map <leader><F1> :ProjectsTree<cr>
-nnoremap <leader>js :JavaSearch -s workspace -x declarations<cr>
-nnoremap <leader>ja :JavaSearch -s workspace -x references<cr>
-nnoremap <leader>jc :JavaCorrect<cr>
-nnoremap <leader>jo :JavaImportOrganize<cr>
-nnoremap <leader>jg :JavaGetSet<cr>
-nnoremap <leader>jb :w\|Mvn -f ~/git/gcaba-io/source/back-end -Dmaven.test.skip=true clean install<cr>
-
-function! CompilePAD()
-    Mvn -f ~/git/padhome/pad/pad_parent -Dmaven.test.skip=true clean install -Pdevelopment-local
-endfunction
-command! MakePAD :call CompilePAD()
-
-function! CompileJBPM()
-    Mvn -f ~/git/padhome/pinkflow-base-project/pinkflow_parent -Dmaven.test.skip=true clean install -Pdevelopment-local
-endfunction
-command! MakeJBPM :call CompileJBPM()
-
-command! MakeMBF :call CompilePAD() | call CompileJBPM()
-
-function! CompilePADC()
-    Mvn -f ~/git/padcirculohome/pad-circulo -Dmaven.test.skip=true clean install -Pdevelopment
-endfunction
-command! MakePADC :call CompilePADC()
-
-function! CompileJBPMC()
-    Mvn -f ~/git/padcirculohome/pinkflow-circulo -Dmaven.test.skip=true -Dmaven.color=false clean install -Pdevelopment
-endfunction
-
-command! MakeJBPMC :call CompileJBPMC()
-
-nnoremap <leader>pp :ProjectProblems<cr>
-nnoremap <leader>pr :ProjectRefreshAll<cr>
-nnoremap <leader>pt :ProjectTab
-
-let g:EclimMvnCompilerAdditionalErrorFormat='\[ERROR]\ %f:[%l\\,%v]\ %m,'
-let g:EclimMakeLCD=0
-
-function! Standalone()
-    tabnext
-    edit ~/jboss-as-7.1.1.Final/standalone/configuration/standalone-io.xml
-endfunction
-map <F10> :call Standalone()<cr>
-
-function! StandalonePAD()
-    tabnext
-    edit ~/jboss-as-7.1.1.Final/standalone/configuration/standalone-pad.xml
-endfunction
-map <F9> :call StandalonePAD()<cr>
 
 """""""
 " GIT "
@@ -428,22 +362,6 @@ function! NERDTreeHighlightFile(extension, fg, bg)
     exec 'autocmd FileType nerdtree highlight '.a:extension.' ctermbg='.a:bg.' ctermfg='.a:fg
     exec 'autocmd FileType nerdtree syn match '.a:extension.' #^\s\+.*'.a:extension.'$#'
 endfunction
-
-call NERDTreeHighlightFile('java', 'blue', 'none')
-call NERDTreeHighlightFile('php', 'blue', 'none')
-call NERDTreeHighlightFile('config', 'yellow', 'none')
-call NERDTreeHighlightFile('conf', 'yellow', 'none')
-call NERDTreeHighlightFile('json', 'yellow', 'none')
-call NERDTreeHighlightFile('xml', 'yellow', 'none')
-call NERDTreeHighlightFile('html', 'cyan', 'none')
-call NERDTreeHighlightFile('js', 'cyan', 'none')
-call NERDTreeHighlightFile('css', 'cyan', 'none')
-call NERDTreeHighlightFile('drl', 'red', 'none')
-call NERDTreeHighlightFile('bpmn', 'red', 'none')
-call NERDTreeHighlightFile('md', 'red', 'none')
-call NERDTreeHighlightFile('sh', 'blue', 'none')
-call NERDTreeHighlightFile('sql', 'blue', 'none')
-call NERDTreeHighlightFile('\*', 'magenta', 'none')
 
 """""""""
 " netrw "
@@ -477,67 +395,6 @@ let g:netrw_liststyle = 0
 "change directory to the current buffer when opening files
 set autochdir
 
-"""""""""""""
-" Command-T "
-"""""""""""""
-let g:CommandTWildIgnore=&wildignore . ",**/target/*"
-let g:CommandTEncoding="UTF-8"
-
-""""""""""
-" Ctrl-P "
-""""""""""
-set runtimepath^=~/.vim/bundle/ctrlp.vim
-
-let g:ctrlp_map = '<c-s-p>'
-let g:ctrlp_cmd = 'CtrlP'
-let g:ctrlp_working_path_mode = 'ra'
-"let g:ctrlp_root_markers = ['pom.xml']
-
-
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]target',
-\}
-""""""
-" Ag "
-""""""
-let g:ag_working_path_mode="r"
-nnoremap <leader>F :execute "Ag " . shellescape(expand("<cWORD>"))<cr>:cw<cr>
-nnoremap \ :Ag<space>
-
-"""""""""""""
-" Syntastic "
-"""""""""""""
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
-let g:syntastic_php_checkers = ['php']
-au BufWriteCmd *.php write || :SyntasticCheck
-
-"""""""""
-" DBExt "
-"""""""""
-let g:dbext_default_profile_gcba = 'type=PGSQL:user=inscripcion_user:host=localhost:dbname=ciclolectivo2016'
-let g:dbext_default_profile_pad = 'type=ORA:srvname=localhost:user=padstage:passwd=padstage'
-
-let g:dbext_default_profile = 'pad'
-augroup gcba
-    au!
-    autocmd BufRead */gcaba_io/* DBSetOption profile=gcba
-augroup end
-
-
-"""""""""""""""
-" Buffergator "
-"""""""""""""""
-let g:buffergator_suppress_keymaps = 1
-nnoremap <leader>b :BuffergatorOpen<cr>
-
 """"""""""""""""""""
 " multiple-cursors "
 """"""""""""""""""""
@@ -547,18 +404,33 @@ let g:multi_cursor_prev_key='<C-p>'
 let g:multi_cursor_skip_key='<C-x>'
 let g:multi_cursor_quit_key='<Esc>'
 
-""""""""""""
-" startify "
-""""""""""""
-let g:startify_bookmarks = [
-            \'/Users/diego/jboss-as-7.1.1.Final/standalone/configuration/standalone-io.xml',
-            \'/Users/diego/jboss-as-7.1.1.Final/standalone/configuration/standalone-pad.xml',
-            \'/Users/diego/jboss-as-7.1.1.Final/standalone/configuration/standalone.xml',
-            \'/Users/diego/jboss-as-7.1.1.Final/standalone/configuration/standaloneTL.xml']
-
-let g:startify_skiplist = ['asana_comment.txt', 'COMMIT_EDITMSG']
-
 """""""""""""""""
 " Indent Guides "
 """""""""""""""""
 let g:indent_guides_guide_size = 1
+
+"""""""
+" FZF "
+"""""""
+function! FzfOmniFiles()
+  let is_git = system('git status')
+  if v:shell_error
+    :Files
+  else
+    :GitFiles
+  endif
+endfunction
+
+function! s:find_git_root()
+  return system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
+endfunction
+
+nnoremap <C-p> :call FzfOmniFiles()<CR>
+
+command! -bang -nargs=* Find call fzf#vim#grep('rg --ignore-file tags --column --line-number --no-heading --fixed-strings --ignore-case  --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).' '.s:find_git_root(), 1, <bang>0)
+nnoremap <leader>F :execute "Find " . shellescape(expand("<cWORD>"))<cr>
+nnoremap \ :Find<space>
+
+nnoremap ; :Buffers<cr>
+nnoremap ' :Tags<cr>
+
